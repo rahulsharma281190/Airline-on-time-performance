@@ -15,3 +15,56 @@ hadoop fs -mkdir /data/decomposed/flights
 hadoop fs -mkdir /data/modelled/airports
 hadoop fs -mkdir /data/modelled/airlines
 hadoop fs -mkdir /data/modelled/flights
+
+
+#Airport data from kafka to hdfs
+
+a1.sources.r1.zookeeperConnect=localhost:2181
+a1.sources.r1.topic=airports
+
+a1.sinks.k1.type = hdfs
+a1.sinks.k1.hdfs.writeFormat=Text
+a1.sinks.k1.hdfs.fileType=DataStream
+a1.sinks.k1.hdfs.path=/data/raw/airports/
+a1.sinks.k1.hdfs.filePrefix=airports
+a1.sinks.k1.hdfs.rollCount=100000
+a1.sinks.k1.hdfs.rollSize=0
+
+# Use a channel which buffers events in memory
+a1.channels.c1.type = memory
+a1.channels.c1.capacity = 10000
+a1.channels.c1.transactionCapacity = 10000
+
+# Bind the source and sink to the channel
+a1.sources.r1.channels = c1
+a1.sinks.k1.channel = c1
+
+
+
+#Planedate data from kafka to hdfs
+# Name the components on this agent
+a1.sources = r1
+a1.sinks = k1
+a1.channels = c1
+
+a1.sources.r1.type=org.apache.flume.source.kafka.KafkaSource
+a1.sources.r1.zookeeperConnect=localhost:2181
+a1.sources.r1.topic=planedate
+
+a1.sinks.k1.type = hdfs
+a1.sinks.k1.hdfs.writeFormat=Text
+a1.sinks.k1.hdfs.fileType=DataStream
+a1.sinks.k1.hdfs.path=/data/raw/planedate/
+a1.sinks.k1.hdfs.filePrefix=planedate
+a1.sinks.k1.hdfs.rollCount=10000000
+a1.sinks.k1.hdfs.rollSize=0
+
+# Use a channel which buffers events in memory
+a1.channels.c1.type = memory
+a1.channels.c1.capacity = 10000
+a1.channels.c1.transactionCapacity = 10000
+
+# Bind the source and sink to the channel
+a1.sources.r1.channels = c1
+a1.sinks.k1.channel = c1
+
