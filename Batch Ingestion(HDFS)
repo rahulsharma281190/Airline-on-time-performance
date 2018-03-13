@@ -1,0 +1,17 @@
+##Create folders in HDFS:
+
+hadoop fs -mkdir /data/raw
+hadoop fs -mkdir /data/modelled
+hadoop fs -mkdir /data/decomposed
+
+hadoop fs -mkdir /data/raw/airports
+hadoop fs -mkdir /data/raw/airlines
+hadoop fs -mkdir /data/raw/flights
+
+hadoop fs -mkdir /data/decomposed/airports
+hadoop fs -mkdir /data/decomposed/airlines
+hadoop fs -mkdir /data/decomposed/flights
+
+hadoop fs -mkdir /data/modelled/airports
+hadoop fs -mkdir /data/modelled/airlines
+hadoop fs -mkdir /data/modelled/flights
