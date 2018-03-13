@@ -1,0 +1,41 @@
+Create Kafka topics
+
+sh kafka-topics --create --zookeeper localhost:2181 --replication-factor 2 --partitions 2 --topic airports
+
+sh kafka-topics --create --zookeeper localhost:2181 --replication-factor 2 --partitions 2 --topic planedate
+
+sh kafka-topics --create --zookeeper localhost:2181 --replication-factor 2 --partitions 2 --topic carriers
+
+sh kafka-topics --create --zookeeper localhost:2181 --replication-factor 2 --partitions 2 --topic otp
+
+//to list all the topics
+sh kafka-topics --list --zookeeper localhost:2181
+
+
+#Download the data
+
+# Make download directory
+mkdir /tmp/flights
+
+# Download flight data by year
+for i in {1987..2008}
+  do
+    echo "$(date) $i Download"
+    fnam=$i.csv.bz2
+    wget -O /tmp/flights/$fnam http://stat-computing.org/dataexpo/2009/$fnam
+    echo "$(date) $i Unzip"
+    bunzip2 /tmp/flights/$fnam
+  done
+
+# Download airline carrier data
+wget -O /tmp/airlines.csv http://www.transtats.bts.gov/Download_Lookup.asp?Lookup=L_UNIQUE_CARRIERS
+
+# Download airports data
+wget -O /tmp/airports.csv https://raw.githubusercontent.com/jpatokal/openflights/master/data/airports.dat
+
+
+# Submit data to Kafka topics
+// kafka producer
+bin/kafka-console-producer.sh --broker-list localhost:9092 --topic planedate < ~/tmp/2008.csv
+bin/kafka-console-producer.sh --broker-list localhost:9092 --topic airports < ~/tmp/airports.csv
+bin/kafka-console-producer.sh --broker-list localhost:9092 --topic carriers < ~/tmp/airlines.csv
