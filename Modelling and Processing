@@ -1,0 +1,39 @@
+## Spark-scala code
+Read avro file to Spark Data Frame based on Scala case classes and then save it to parquet file
+
+case class airports(iata:String,    airport:String, city:String,    state:String,   country:String,lat:String,  longt:String, insert_time:String, uuid:String)
+
+case class carriers(code:String,    description:String, insert_time:String, uuid:String )
+
+case class planedate(year: String, month : String, dayofmonth : String, dayofweek : String, deptime : String, crsdeptime : String, arrtime : String, crsarrtime : String, uniquecarrier : String,flightnum : String, tailnum : String, actualelapsedtime : String, crselapsedtime : String, airtime : String, arrdelay : String, depdelay : String, origin : String, dest : String, distance : String, taxiin : String, taxiout : String, cancelled : String, cancellationcode : String,
+ diverted : String, carrierdelay : String, weatherdelay : String, nasdelay : String, securitydelay : String, lateAircraftdelay : String, insert_time: String, uuid : String )
+ 
+import org.apache.spark.sql.functions._
+import com.databricks.spark.avro._
+import org.apache.spark.sql.SparkSession
+
+val spark = SparkSession.builder()
+                         .master("spark://127.0.01:7077")
+                        .getOrCreate()
+
+// The Avro records get converted to Spark types and
+// then written back out as Parquet records
+val df_planedate_decomposed = spark.read
+              .avro("hdfs://localhost:8020/data/decomposed/planedate/")           
+              .as[planedate]
+              
+val df_airports_decomposed = spark.read
+              .avro("hdfs://localhost:8020/data/decomposed/airports/")           
+              .as[planedate]
+val df_carriers_decomposed = spark.read
+              .avro("hdfs://localhost:8020/data/decomposed/carriers/")           
+              .as[carriers]
+
+ 
+   
+    // Write to Parquet file to modelled zone
+     df_planedate_decomposed.write.parquet("hdfs://localhost:8020/data/modelled/planedate/")
+     df_carriers_decomposed.write.parquet("hdfs://localhost:8020/data/modelled/carriers/")
+     df_airports_decomposed .write.parquet("hdfs://localhost:8020/data/modelled/airports/")
+     
+    
